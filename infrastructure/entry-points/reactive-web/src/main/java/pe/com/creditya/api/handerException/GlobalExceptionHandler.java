@@ -1,4 +1,4 @@
-package pe.com.creditya.api.config;
+package pe.com.creditya.api.handerException;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

@@ -18,7 +18,7 @@ public class ApplicationUseCase {
     private final LoanTypeRepository loanTypeRepository;
     private final LoanStatusRepository loanStatusRepository;
 
-    public Mono<Application> saveApplication(Application application) {
+    public Mono<Application> saveLoanApplication(Application application) {
         return userRepository.getUserByDocumentNumber(application.getDocumentNumber())
                 .switchIfEmpty(Mono.error(new UserNotFoundException(application.getDocumentNumber())))
                 .flatMap(user -> {

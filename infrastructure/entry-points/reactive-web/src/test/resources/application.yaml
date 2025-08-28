@@ -1,0 +1,3 @@
+routes:
+  paths:
+    applications: "/api/v1/solicitudes"

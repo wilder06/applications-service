@@ -1,60 +1,81 @@
 package pe.com.creditya.api;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import pe.com.creditya.api.config.ApplicationPath;
+import pe.com.creditya.api.config.RequestValidator;
+import pe.com.creditya.api.dtos.ApplicationRequest;
+import pe.com.creditya.api.dtos.ApplicationResponse;
+import pe.com.creditya.api.mapper.ApplicationMapper;
+import pe.com.creditya.api.mapper.ApplicationMapperImpl;
+import pe.com.creditya.model.application.Application;
+import pe.com.creditya.model.user.User;
+import pe.com.creditya.usecase.application.ApplicationUseCase;
+import reactor.core.publisher.Mono;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class})
+import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@ContextConfiguration(classes = {RouterRest.class, Handler.class, RequestValidator.class, ApplicationMapperImpl.class})
+@EnableConfigurationProperties(ApplicationPath.class)
 @WebFluxTest
 class RouterRestTest {
 
     @Autowired
     private WebTestClient webTestClient;
+    @MockitoBean
+    private ApplicationMapper applicationMapper;
+
+    @MockitoBean
+    private ApplicationUseCase applicationUseCase;
+    @Autowired
+    private ApplicationPath applicationPath;
+
+    Application application=Application.builder()
+            .email("emal@gmail.com")
+            .amount(BigDecimal.valueOf(1000))
+            .documentNumber("48107091")
+            .term(60)
+            .loanType(1L)
+            .build();
+
+    ApplicationResponse applicationResponse =ApplicationResponse.builder()
+            .amount(BigDecimal.valueOf(1000))
+            .term(60)
+            .build();
+    ApplicationRequest applicationRequest=ApplicationRequest.builder()
+            .amount(BigDecimal.valueOf(1000))
+            .documentNumber("48107091")
+            .term(60)
+            .loanType(1L)
+            .build();
 
     @Test
-    void testListenGETUseCase() {
-        webTestClient.get()
-                .uri("/api/usecase/path")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
+    void shouldLoadUserPathProperties() {
+        assertEquals("/api/v1/solicitudes", applicationPath.getApplications());
     }
-
-    @Test
-    void testListenGETOtherUseCase() {
-        webTestClient.get()
-                .uri("/api/otherusercase/path")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
-    }
-
     @Test
     void testListenPOSTUseCase() {
+        when(applicationMapper.toApplication(any(ApplicationRequest.class))).thenReturn(application);
+        when(applicationUseCase.saveLoanApplication(any(Application.class))).thenReturn(Mono.just(application));
+        when(applicationMapper.toApplicationResponse(any(Application.class))).thenReturn(applicationResponse);
         webTestClient.post()
-                .uri("/api/usecase/otherpath")
+                .uri(applicationPath.getApplications())
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue("")
+                .bodyValue(applicationRequest)
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
+                .expectStatus().isCreated();
     }
+
 }

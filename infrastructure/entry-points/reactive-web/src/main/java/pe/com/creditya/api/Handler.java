@@ -26,7 +26,7 @@ public class Handler {
                 .map(applicationMapper::toApplication)
                 .doOnNext(application -> log.debug("Transformando ApplicationRequest a Application: {}", application))
                 .flatMap(applicationUseCase::saveLoanApplication)
-                .doOnNext(application -> log.info("Solicitud registrado con éxito: {}", application.getDocumentNumber()))
+                .doOnNext(application -> log.info("Solicitud registrado con éxito: {}", application.getIdApplication()))
                 .map(applicationMapper::toApplicationResponse)
                 .flatMap(savedApplication -> ServerResponse
                         .status(HttpStatus.CREATED)

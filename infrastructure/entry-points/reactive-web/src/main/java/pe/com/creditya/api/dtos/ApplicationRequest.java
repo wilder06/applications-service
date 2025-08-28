@@ -22,6 +22,6 @@ public class ApplicationRequest {
     private Integer term;
     @NotBlank(message = "El Numero de Documento no puede estar vacío")
     private String documentNumber;
-    @NotBlank(message = "El Tipo de Prestamo no puede estar vacío")
-    private String loanType;
+    @NotNull(message = "El Tipo de Prestamo no puede estar vacío")
+    private Long loanType;
 }

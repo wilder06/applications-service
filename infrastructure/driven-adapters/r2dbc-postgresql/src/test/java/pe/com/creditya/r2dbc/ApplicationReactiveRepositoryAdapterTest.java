@@ -1,15 +1,22 @@
 package pe.com.creditya.r2dbc;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
+import org.springframework.transaction.reactive.TransactionalOperator;
+import pe.com.creditya.model.application.Application;
+import pe.com.creditya.r2dbc.entity.ApplicationEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -18,61 +25,38 @@ import static org.mockito.Mockito.when;
 class ApplicationReactiveRepositoryAdapterTest {
     // TODO: change four you own tests
 
-    @InjectMocks
-    ApplicationReactiveRepositoryAdapter repositoryAdapter;
+    @Mock
+    private ApplicationReactiveRepository repository;
 
     @Mock
-    ApplicationReactiveRepository repository;
+    private ObjectMapper mapper;
 
     @Mock
-    ObjectMapper mapper;
+    private TransactionalOperator transactionalOperator;
 
-    @Test
-    void mustFindValueById() {
+    private ApplicationReactiveRepositoryAdapter adapter;
 
-        when(repository.findById("1")).thenReturn(Mono.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
-
-        Mono<Object> result = repositoryAdapter.findById("1");
-
-        StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
-                .verifyComplete();
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        adapter = new ApplicationReactiveRepositoryAdapter(repository, mapper, transactionalOperator);
+        when(transactionalOperator.transactional(any(Mono.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     @Test
-    void mustFindAllValues() {
-        when(repository.findAll()).thenReturn(Flux.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
+    void mustSaveLoanApplication() {
+        Application application = new Application(1, BigDecimal.valueOf(12.1), 12, "12345678", "LoanTest@gmail.com", 1L, 1L);
+        ApplicationEntity entity = new ApplicationEntity(1, BigDecimal.valueOf(12.1), 12, "LoanTest@gmail.com", 1L, 1L);
 
-        Flux<Object> result = repositoryAdapter.findAll();
+        when(mapper.map(application, ApplicationEntity.class)).thenReturn(entity);
+        when(repository.save(entity)).thenReturn(Mono.just(entity));
+        when(mapper.map(entity, Application.class)).thenReturn(application);
 
-        StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
-                .verifyComplete();
-    }
-
-    @Test
-    void mustFindByExample() {
-        when(repository.findAll(any(Example.class))).thenReturn(Flux.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
-
-        Flux<Object> result = repositoryAdapter.findByExample("test");
+        Mono<Application> result = adapter.saveLoanApplication(application);
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
-                .verifyComplete();
-    }
-
-    @Test
-    void mustSaveValue() {
-        when(repository.save("test")).thenReturn(Mono.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
-
-        Mono<Object> result = repositoryAdapter.save("test");
-
-        StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
+                .expectNextMatches(app -> app.getDocumentNumber().equals("12345678"))
                 .verifyComplete();
     }
 }

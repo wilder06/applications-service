@@ -3,6 +3,7 @@ package pe.com.creditya.usecase.application;
 import lombok.RequiredArgsConstructor;
 import pe.com.creditya.model.application.Application;
 import pe.com.creditya.model.application.gateways.ApplicationRepository;
+import pe.com.creditya.model.common.constants.UserConstants;
 import pe.com.creditya.model.common.exception.UserNotFoundException;
 import pe.com.creditya.model.common.utils.DomainErrorMapper;
 import pe.com.creditya.model.loanstatus.LoanStatus;
@@ -12,12 +13,12 @@ import pe.com.creditya.model.user.gateways.UserRepository;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class ApplicationUseCase {
+public class ApplicationUseCase implements IApplicationUseCase {
     private final UserRepository userRepository;
     private final ApplicationRepository applicationRepository;
     private final LoanTypeRepository loanTypeRepository;
     private final LoanStatusRepository loanStatusRepository;
-
+@Override
     public Mono<Application> saveLoanApplication(Application application) {
         return userRepository.getUserByDocumentNumber(application.getDocumentNumber())
                 .switchIfEmpty(Mono.error(new UserNotFoundException(application.getDocumentNumber())))
@@ -34,13 +35,13 @@ public class ApplicationUseCase {
 
     private Mono<Void> validLoanType(Long localTypeId) {
         return loanTypeRepository.findByIdAndAutomaticValidationTrue(localTypeId)
-                .switchIfEmpty(Mono.error(new RuntimeException("Tipo de préstamo no válido o inactivo")))
+                .switchIfEmpty(Mono.error(new RuntimeException(UserConstants.LOGGER_TYPE_LOAN_ERROR)))
                 .then(Mono.empty());
     }
 
     private Mono<LoanStatus> findInitialStatus() {
-        return loanStatusRepository.findByName("Pendiente de revisión")
-                .switchIfEmpty(Mono.error(new RuntimeException("Estado inicial no configurado")));
+        return loanStatusRepository.findByName(UserConstants.TYPE_STATUS)
+                .switchIfEmpty(Mono.error(new RuntimeException(UserConstants.LOGGER_ERROR_TYPE_STATUS)));
     }
 }
 

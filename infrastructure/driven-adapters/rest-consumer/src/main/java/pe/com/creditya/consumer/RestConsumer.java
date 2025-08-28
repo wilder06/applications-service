@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import pe.com.creditya.consumer.mapper.UserMapper;
+import pe.com.creditya.model.common.constants.UserConstants;
 import pe.com.creditya.model.common.exception.CustomClientException;
 import pe.com.creditya.model.user.User;
 import pe.com.creditya.model.user.gateways.UserRepository;
@@ -25,25 +26,21 @@ public class RestConsumer implements UserRepository {
 
     @Override
     public Mono<User> getUserByDocumentNumber(String documentNumber) {
-        log.info("Iniciando la validacion del usuario");
+        log.info(UserConstants.LOGGER_INIT_CONSUME_CLIENT);
         return client
                 .get()
-                .uri("/api/v1/usuarios/{documentNumber}", documentNumber)
+                .uri(UserConstants.PATH_CLIENT, documentNumber)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, clientResponse ->
                         clientResponse.bodyToMono(GENERIC_RESPONSE)
-                                .doOnNext(error -> log.error("Error from client API: {}", error))
+                                .doOnNext(error -> log.error(UserConstants.LOGGER_CLIENT_ERROR, error))
                                 .flatMap(error -> Mono.error(new CustomClientException(error.toString())))
                 )
                 .bodyToMono(UserResponse.class)
                 .map(userMapper::toUser)
-                .doOnSuccess(user -> log.info("Se encontro el cliente con Numero de Documento: {}", documentNumber))
-                .doOnError(ex -> log.error("No se encontro el cliente {}: {}", documentNumber, ex.getMessage()));
+                .doOnSuccess(user -> log.info(UserConstants.LOGGER_USER, documentNumber))
+                .doOnError(ex -> log.error(UserConstants.LOGGER_USER_NOT_FOUND, documentNumber, ex.getMessage()));
     }
 
-
-    private Mono<User> getUserByDocumentNumberFallback(String documentNumber, Throwable ex) {
-        return Mono.error(new RuntimeException("Fallback: El servicio User service no esta disponible", ex));
-    }
 }

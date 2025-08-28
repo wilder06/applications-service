@@ -6,6 +6,8 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import pe.com.creditya.api.constant.ApplicationConstant;
+import pe.com.creditya.model.application.Application;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
@@ -20,12 +22,12 @@ public class RequestValidator {
     public <T> Mono<T> validate(T request) {
         Set<ConstraintViolation<T>> violations = validator.validate(request);
         if (!violations.isEmpty()) {
-            log.warn("Error en la validacion del request: {} | Violations: {}",
+            log.warn(ApplicationConstant.LOGGER_VALIDATE_FAILURE,
                     request,
                     violations.stream().map(ConstraintViolation::getMessage).toList());
             return Mono.error(new ConstraintViolationException(violations));
         }
-        log.info("Validacion exitoso del request: {}", request);
+        log.info(ApplicationConstant.LOGGER_VALIDATE_SUCCESS, request);
         return Mono.just(request);
     }
 

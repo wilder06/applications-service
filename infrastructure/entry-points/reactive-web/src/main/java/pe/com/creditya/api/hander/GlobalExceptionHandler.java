@@ -1,4 +1,4 @@
-package pe.com.creditya.api.handerException;
+package pe.com.creditya.api.hander;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
 import org.springframework.web.server.ServerWebExchange;
-import pe.com.creditya.api.constant.ApplicationConstant;
+import pe.com.creditya.api.common.constant.LogConstant;
 import pe.com.creditya.api.dtos.ErrorResponseDto;
+import pe.com.creditya.model.common.exception.NotFoundException;
 import pe.com.creditya.model.common.exception.TechnicalException;
-import pe.com.creditya.model.common.exception.UserNotFoundException;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
@@ -31,8 +31,8 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.toString(), String.join(", ", errors))));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public Mono<ResponseEntity<ErrorResponseDto>> handleExists(UserNotFoundException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public Mono<ResponseEntity<ErrorResponseDto>> handleExists(NotFoundException ex) {
         return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponseDto(HttpStatus.CONFLICT.toString(), ex.getMessage())));
     }
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         String path = exchange.getRequest().getPath().value();
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                String.valueOf(HttpStatus.NOT_FOUND.value()), ApplicationConstant.LOGGER_RESOURCE_NOT_FOUND
+                String.valueOf(HttpStatus.NOT_FOUND.value()), LogConstant.LOGGER_RESOURCE_NOT_FOUND
                  + path,
                 Instant.now()
         );

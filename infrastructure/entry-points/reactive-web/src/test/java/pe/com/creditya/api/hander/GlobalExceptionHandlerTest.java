@@ -1,4 +1,4 @@
-package pe.com.creditya.api.handerException;
+package pe.com.creditya.api.hander;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -12,8 +12,8 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
 import pe.com.creditya.api.dtos.ErrorResponseDto;
+import pe.com.creditya.model.common.exception.NotFoundException;
 import pe.com.creditya.model.common.exception.TechnicalException;
-import pe.com.creditya.model.common.exception.UserNotFoundException;
 import pe.com.creditya.model.user.User;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -34,7 +34,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void shouldHandleUserNotFoundException() {
-        UserNotFoundException ex = new UserNotFoundException("48595623");
+        NotFoundException ex = new NotFoundException("48595623");
 
         Mono<ResponseEntity<ErrorResponseDto>> responseMono = handler.handleExists(ex);
 

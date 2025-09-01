@@ -10,6 +10,7 @@ import pe.com.creditya.model.application.Application;
 public interface ApplicationMapper {
     @Mapping(target = "idApplication", ignore = true)
     @Mapping(target = "email", ignore = true)
+    @Mapping(target = "idStatus", ignore = true)
     Application toApplication(ApplicationRequest request);
 
     ApplicationResponse toApplicationResponse(Application application);

@@ -1,4 +1,4 @@
-package pe.com.creditya.api.config;
+package pe.com.creditya.api.common.config;
 
 import lombok.Getter;
 import lombok.Setter;

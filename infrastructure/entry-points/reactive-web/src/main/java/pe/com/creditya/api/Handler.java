@@ -7,34 +7,34 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import pe.com.creditya.api.config.RequestValidator;
-import pe.com.creditya.api.constant.ApplicationConstant;
+import pe.com.creditya.api.common.config.RequestValidator;
+import pe.com.creditya.api.common.constant.LogConstant;
 import pe.com.creditya.api.dtos.ApplicationRequest;
 import pe.com.creditya.api.mapper.ApplicationMapper;
-import pe.com.creditya.usecase.application.ApplicationUseCase;
+import pe.com.creditya.usecase.application.IApplicationUseCase;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class Handler {
-    private final ApplicationUseCase applicationUseCase;
+    private final IApplicationUseCase applicationUseCase;
     private final ApplicationMapper applicationMapper;
     private final RequestValidator requestValidator;
 
     public Mono<ServerResponse> listenSaveLoanApplication(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ApplicationRequest.class)
-                .doOnNext(req -> log.info(ApplicationConstant.LOGGER_START, req.getDocumentNumber()))
+                .doOnNext(req -> log.info(LogConstant.LOGGER_START, req))
                 .flatMap(requestValidator::validate)
                 .map(applicationMapper::toApplication)
-                .doOnNext(application -> log.debug(ApplicationConstant.LOGGER_MAPPER, application))
+                .doOnNext(application -> log.debug(LogConstant.LOGGER_MAPPER, application))
                 .flatMap(applicationUseCase::saveLoanApplication)
-                .doOnNext(application -> log.info(ApplicationConstant.LOGGER_SAVE_SUCCESS, application.getIdApplication()))
+                .doOnNext(application -> log.info(LogConstant.LOGGER_SAVE_SUCCESS, application.getIdApplication()))
                 .map(applicationMapper::toApplicationResponse)
                 .flatMap(savedApplication -> ServerResponse
                         .status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(savedApplication))
-                .doOnError(ex -> log.error(ApplicationConstant.LOGGER_SAVE_FAILURE, ex.getMessage(), ex));
+                .doOnError(ex -> log.error(LogConstant.LOGGER_SAVE_FAILURE, ex.getMessage(), ex));
     }
 }

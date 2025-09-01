@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import pe.com.creditya.api.config.ApplicationPath;
+import pe.com.creditya.api.common.config.ApplicationPath;
 import pe.com.creditya.api.dtos.ApplicationRequest;
 import pe.com.creditya.api.dtos.ApplicationResponse;
 import pe.com.creditya.api.dtos.ErrorResponseDto;

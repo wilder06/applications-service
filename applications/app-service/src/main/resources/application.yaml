@@ -46,6 +46,7 @@ adapter:
   restconsumer:
     timeout: 5000
     url: "http://localhost:8080"
+    path-find-user: /api/v1/usuarios/{documentNumber}
 resilience4j:
   circuitbreaker:
     instances:

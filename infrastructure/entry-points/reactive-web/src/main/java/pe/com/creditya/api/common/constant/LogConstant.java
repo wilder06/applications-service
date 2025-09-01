@@ -1,6 +1,6 @@
-package pe.com.creditya.api.constant;
+package pe.com.creditya.api.common.constant;
 
-public class ApplicationConstant {
+public class LogConstant {
 
    public static final String LOGGER_START="Request recibido para registrar Solicitud: {}";
    public static final String LOGGER_MAPPER="Transformando ApplicationRequest a Application: {}";

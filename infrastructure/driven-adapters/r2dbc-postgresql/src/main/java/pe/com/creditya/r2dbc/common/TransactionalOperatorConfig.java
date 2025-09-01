@@ -1,4 +1,4 @@
-package pe.com.creditya.r2dbc.config;
+package pe.com.creditya.r2dbc.common;
 
 import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.context.annotation.Bean;

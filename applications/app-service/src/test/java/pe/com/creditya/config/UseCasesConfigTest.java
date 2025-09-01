@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import pe.com.creditya.model.application.gateways.ApplicationRepository;
+import pe.com.creditya.model.common.validations.LoanApplicationValidator;
 import pe.com.creditya.model.loanstatus.gateways.LoanStatusRepository;
 import pe.com.creditya.model.loantype.LoanType;
 import pe.com.creditya.model.loantype.gateways.LoanTypeRepository;
@@ -57,6 +58,10 @@ public class UseCasesConfigTest {
         @Bean
         public ApplicationRepository applicationRepository() {
             return Mockito.mock(ApplicationRepository.class);
+        }
+        @Bean
+        public LoanApplicationValidator loanApplicationValidator() {
+            return Mockito.mock(LoanApplicationValidator.class);
         }
     }
 

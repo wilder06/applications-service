@@ -1,14 +1,18 @@
-package pe.com.creditya.r2dbc;
+package pe.com.creditya.r2dbc.loanApplication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import pe.com.creditya.model.application.Application;
 import pe.com.creditya.model.application.gateways.ApplicationRepository;
+import pe.com.creditya.model.common.exception.ApplicationException;
+import pe.com.creditya.r2dbc.common.constants.LoggerConstants;
 import pe.com.creditya.r2dbc.entity.ApplicationEntity;
 import pe.com.creditya.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Repository
 public class ApplicationReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         Application,
@@ -20,14 +24,19 @@ public class ApplicationReactiveRepositoryAdapter extends ReactiveAdapterOperati
         super(repository, mapper, entity -> mapper.map(entity, Application.class));
         this.transactionalOperator = transactionalOperator;
     }
+
     private final TransactionalOperator transactionalOperator;
+
     @Override
     public Mono<Application> saveLoanApplication(Application application) {
-        ApplicationEntity entity = mapper.map(application, ApplicationEntity.class);
-
-        return repository.save(entity)
-                .map(save -> mapper.map(save, Application.class))
-                .as(transactionalOperator::transactional);
+        log.info(LoggerConstants.LOG_SAVE_APPLICATION, application);
+        return super.save(application)
+                .as(transactionalOperator::transactional)
+                .onErrorResume(ex ->
+                        Mono.error(new ApplicationException(
+                                LoggerConstants.LOG_SAVE_APPLICATION_FAIL + application.getDocumentNumber(),
+                                ex
+                        )));
     }
 }
 

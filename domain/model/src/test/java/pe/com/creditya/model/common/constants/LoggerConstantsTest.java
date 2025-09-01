@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserConstantsTest {
+class LoggerConstantsTest {
 
     @Test
     void shouldContainExpectedConstantValue() {
-        String constantValue = UserConstants.USER_NOT_FOUND;
+        String constantValue = LoggerConstants.USER_NOT_FOUND;
 
         assertThat(constantValue)
-                .isEqualTo("User not found with documentNumber: ");
+                .isEqualTo("No se encontro usuario con numero documento: ");
     }
 }

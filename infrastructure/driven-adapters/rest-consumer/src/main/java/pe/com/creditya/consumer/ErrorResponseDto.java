@@ -1,7 +1,9 @@
 package pe.com.creditya.consumer;
 
-import java.time.Instant;
+import lombok.Builder;
 
+import java.time.Instant;
+@Builder
 public record ErrorResponseDto(String code,
                                String message,
                                Instant timestamp) {

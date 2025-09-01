@@ -2,33 +2,24 @@ package pe.com.creditya.model.common.exception;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TechnicalExceptionTest {
 
     @Test
-    void shouldStoreMessageAndCause() {
-        String expectedMessage = "Error técnico en el sistema";
-        Throwable expectedCause = new RuntimeException("Causa raíz");
+    void shouldCreateTechnicalExceptionWithMessageAndCause() {
+        // Given
+        String message = "Error técnico en la base de datos";
+        Throwable cause = new RuntimeException("Connection timeout");
 
-        TechnicalException exception = new TechnicalException(expectedMessage, expectedCause);
+        // When
+        TechnicalException exception = new TechnicalException(message, cause);
 
-        assertEquals(expectedMessage, exception.getMessage());
-        assertEquals(expectedCause, exception.getCause());
-    }
-
-    @Test
-    void shouldThrowTechnicalException() {
-        Throwable cause = new IllegalStateException("Estado inválido");
-
-        TechnicalException thrown = assertThrows(
-                TechnicalException.class,
-                () -> {
-                    throw new TechnicalException("Error al procesar", cause);
-                }
-        );
-
-        assertEquals("Error al procesar", thrown.getMessage());
-        assertEquals(cause, thrown.getCause());
+        // Then
+        assertThat(exception)
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Error técnico en la base de datos")
+                .hasCause(cause);
     }
 }

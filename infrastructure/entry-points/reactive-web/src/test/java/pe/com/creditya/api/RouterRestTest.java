@@ -1,7 +1,5 @@
 package pe.com.creditya.api;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -10,14 +8,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import pe.com.creditya.api.config.ApplicationPath;
-import pe.com.creditya.api.config.RequestValidator;
+import pe.com.creditya.api.common.config.ApplicationPath;
+import pe.com.creditya.api.common.config.RequestValidator;
 import pe.com.creditya.api.dtos.ApplicationRequest;
 import pe.com.creditya.api.dtos.ApplicationResponse;
 import pe.com.creditya.api.mapper.ApplicationMapper;
 import pe.com.creditya.api.mapper.ApplicationMapperImpl;
 import pe.com.creditya.model.application.Application;
-import pe.com.creditya.model.user.User;
+import pe.com.creditya.model.loantype.LoanTypeEnum;
 import pe.com.creditya.usecase.application.ApplicationUseCase;
 import reactor.core.publisher.Mono;
 
@@ -47,7 +45,7 @@ class RouterRestTest {
             .amount(BigDecimal.valueOf(1000))
             .documentNumber("48107091")
             .term(60)
-            .loanType(1L)
+            .idLoanType(1L)
             .build();
 
     ApplicationResponse applicationResponse =ApplicationResponse.builder()
@@ -58,7 +56,7 @@ class RouterRestTest {
             .amount(BigDecimal.valueOf(1000))
             .documentNumber("48107091")
             .term(60)
-            .loanType(1L)
+            .loanType(LoanTypeEnum.PERSONAL.name())
             .build();
 
     @Test

@@ -24,7 +24,6 @@ public class ApplicationUseCase implements IApplicationUseCase {
 
     @Override
     public Mono<Application> saveLoanApplication(Application application) {
-        validator.validate(application);
         return userRepository.getUserByDocumentNumber(application.getDocumentNumber())
                 .switchIfEmpty(Mono.error(new NotFoundException(LoggerConstants.USER_NOT_FOUND+application.getDocumentNumber())))
                 .flatMap(user -> {
@@ -33,6 +32,7 @@ public class ApplicationUseCase implements IApplicationUseCase {
                             .then(findInitialStatus())
                             .flatMap(initialStatus -> {
                                 application.setIdStatus(initialStatus.getId());
+                                validator.validate(application);
                                 return applicationRepository.saveLoanApplication(application);
                             });
                 }).onErrorResume(error -> Mono.error(new TechnicalException(LoggerConstants.LOGGER_ERROR_GENERAL+"{}",error)));

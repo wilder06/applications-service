@@ -4,18 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
 public enum LoanStatuEnum {
-    PENDING(1, "Pendiente"),
-    APPROVED(2, "Aprobado"),
-    REJECTED(3, "Rechazado");
-    private  int id;
+    PENDING(1L, "PENDING"),
+    APPROVED(2L, "APPROVED"),
+    REJECTED(3L, "REJECTED"),
+    CANCELLED(4L, "CANCELLED"),
+    DISBURSED(5L, "DISBURSED");
+    private  Long id;
     private  String description;
-    public static LoanStatuEnum fromId(int id) {
+    public static LoanStatuEnum fromId(Long id) {
         return Arrays.stream(values())
-                .filter(s -> s.id == id)
+                .filter(s -> Objects.equals(s.id, id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Estado no válido: " + id));
     }

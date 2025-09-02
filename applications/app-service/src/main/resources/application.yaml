@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8090
 spring:
   application:
     name: "applications-service"
@@ -32,7 +32,7 @@ adapters:
   r2dbc:
     host: "localhost"
     port: 5432
-    database: "application"
+    database: "applications_db"
     schema: "public"
     username: "postgres"
     password: "postgres"

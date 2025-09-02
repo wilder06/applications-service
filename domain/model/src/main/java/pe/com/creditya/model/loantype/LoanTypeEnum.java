@@ -4,20 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
 public enum LoanTypeEnum {
-    PERSONAL(1, "Préstamo Personal"),
-    MORTGAGE(2, "Hipotecario"),
-    CAR(3, "Vehicular"),
-    EDUCATIONAL(4, "Educativo"),
-    QUICK_CONSUMPTION(5, "Consumo Rápido");
-    private int id;
+    PERSONAL(1L, "Préstamo Personal"),
+    MORTGAGE(2L, "Hipotecario"),
+    CAR(3L, "Vehicular"),
+    EDUCATIONAL(4L, "Educativo"),
+    QUICK_CONSUMPTION(5L, "Consumo Rápido");
+    private Long id;
     private String description;
 
 
-    public static Integer fromName(String name) {
+    public static Long fromName(String name) {
         return Arrays.stream(values())
                 .filter(e -> e.name().equalsIgnoreCase(name))
                 .findFirst()
@@ -25,9 +26,9 @@ public enum LoanTypeEnum {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid loan type: " + name));
     }
 
-    public static LoanTypeEnum fromId(int id) {
+    public static LoanTypeEnum fromId(Long id) {
         return Arrays.stream(values())
-                .filter(e -> e.id == id)
+                .filter(e -> Objects.equals(e.id, id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid loan type id: " + id));
     }

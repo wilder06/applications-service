@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 public record ApplicationResponse(
          BigDecimal amount,
          Integer term,
-         String loanType
+         String loanType,
+         String loanStatus
 ) {
 }

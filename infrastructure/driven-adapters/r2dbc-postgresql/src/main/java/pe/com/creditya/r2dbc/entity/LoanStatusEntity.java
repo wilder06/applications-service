@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 public class LoanStatusEntity {
     @Id
-    @Column("id_loan_status")
+    @Column("id_status")
     private Long id;
     private String  name;
     private String description;

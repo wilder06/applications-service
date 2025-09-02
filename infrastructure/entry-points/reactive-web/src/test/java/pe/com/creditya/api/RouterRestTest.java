@@ -15,6 +15,7 @@ import pe.com.creditya.api.dtos.ApplicationResponse;
 import pe.com.creditya.api.mapper.ApplicationMapper;
 import pe.com.creditya.api.mapper.ApplicationMapperImpl;
 import pe.com.creditya.model.application.Application;
+import pe.com.creditya.model.loanstatus.LoanStatuEnum;
 import pe.com.creditya.model.loantype.LoanTypeEnum;
 import pe.com.creditya.usecase.application.ApplicationUseCase;
 import reactor.core.publisher.Mono;
@@ -51,10 +52,12 @@ class RouterRestTest {
     ApplicationResponse applicationResponse =ApplicationResponse.builder()
             .amount(BigDecimal.valueOf(1000))
             .term(60)
+            .loanStatus(LoanStatuEnum.PENDING.name())
+            .loanType(LoanTypeEnum.PERSONAL.name())
             .build();
     ApplicationRequest applicationRequest=ApplicationRequest.builder()
             .amount(BigDecimal.valueOf(1000))
-            .documentNumber("48107091")
+            .documentNumber("43107034")
             .term(60)
             .loanType(LoanTypeEnum.PERSONAL.name())
             .build();

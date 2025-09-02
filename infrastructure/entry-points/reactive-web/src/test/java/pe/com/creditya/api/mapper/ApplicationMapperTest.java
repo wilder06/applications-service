@@ -35,6 +35,8 @@ class ApplicationMapperTest {
         Application application = Application.builder()
                 .documentNumber("87654321")
                 .email("mapped@example.com")
+                .idLoanType(1L)
+                .idStatus(1L)
                 .build();
 
         ApplicationResponse response = applicationMapper.toApplicationResponse(application);

@@ -28,6 +28,9 @@ cors:
 routes:
   paths:
     applications: "/api/v1/solicitudes"
+jwt:
+  secret: mySuperSecretKeyThatIsAtLeast256BitsLongForHS256Algorithm
+  expiration: 30
 adapters:
   r2dbc:
     host: "localhost"
@@ -36,17 +39,12 @@ adapters:
     schema: "public"
     username: "postgres"
     password: "postgres"
-springdoc:
-  api-docs:
-    enabled: true
-    path: "/api-docs"
-  swagger-ui:
-    path: "/swagger-ui.html"
 adapter:
   restconsumer:
     timeout: 5000
     url: "http://localhost:8080"
-    path-find-user: /api/v1/usuarios/{documentNumber}
+    path-find-user-by-document-number: /api/v1/usuarios/{documentNumber}
+    path-find-users-by-emails: /api/v1/usuarios/by-emails
 resilience4j:
   circuitbreaker:
     instances:

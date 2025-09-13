@@ -1,6 +1,7 @@
 package pe.com.creditya.api;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -17,7 +18,9 @@ import pe.com.creditya.api.common.config.ApplicationPath;
 import pe.com.creditya.api.dtos.ApplicationRequest;
 import pe.com.creditya.api.dtos.ApplicationResponse;
 import pe.com.creditya.api.dtos.ErrorResponseDto;
+import pe.com.creditya.api.dtos.PaginatedResponseDto;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -87,9 +90,38 @@ public class RouterRest {
 
                             }
                     )
+            ), @RouterOperation(
+            path = "/api/v1/solicitudes",
+            produces = {"application/json"},
+            method = {RequestMethod.GET},
+            beanClass = Handler.class,
+            beanMethod = "listenAllLoanApplicationFindStatusPending",
+            operation = @Operation(
+                    operationId = "listenAllLoanApplicationFindStatusPending",
+                    summary = "Obtener solicitudes por estado con paginación",
+                    description = "Retorna todas las solicitudes con el estado especificado en formato paginado.",
+                    parameters = {
+                            @Parameter(name = "status", description = "Nombre del estado a filtrar", required = true, example = "PENDING"),
+                            @Parameter(name = "page", description = "Número de página (0..N)", required = true, example = "0"),
+                            @Parameter(name = "size", description = "Tamaño de página", required = true, example = "10")
+                    },
+                    responses = {
+                            @ApiResponse(
+                                    responseCode = "200",
+                                    description = "Lista paginada de solicitudes",
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = PaginatedResponseDto.class)
+                                    )
+                            ),
+                            @ApiResponse(responseCode = "400", description = "Parámetros inválidos"),
+                            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+                    }
             )
+    )
     })
     public RouterFunction<ServerResponse> routerFunction() {
-        return route(POST(applicationPath.getApplications()), applicationHandler::listenSaveLoanApplication);
+        return route(POST(applicationPath.getApplications()), applicationHandler::listenSaveLoanApplication)
+                .andRoute(GET(applicationPath.getApplications()), applicationHandler::listenAllLoanApplicationFindStatusPending);
     }
 }

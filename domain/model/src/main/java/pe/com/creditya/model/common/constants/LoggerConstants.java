@@ -9,5 +9,7 @@ public class LoggerConstants {
     public static final String LOGGER_TYPE_LOAN_ERROR="Tipo de préstamo no válido o inactivo";
     public static final String LOGGER_ERROR_TYPE_STATUS="Estado inicial no configurado";
     public static final String LOGGER_ERROR_GENERAL = "Error inesperado al registra solicitud de préstamo: ";
+    public static final String LOGGER_SEARCH_COMPLETED = " ";
+    public static final String LOGGER_USERS_NOT_FOUND = " ";
 
 }

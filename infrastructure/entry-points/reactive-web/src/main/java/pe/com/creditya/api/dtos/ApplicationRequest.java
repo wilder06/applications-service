@@ -5,10 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.math.BigDecimal;
+
 @Builder
 public record ApplicationRequest(
         @NotNull BigDecimal amount,
         @NotNull Integer term,
         @NotBlank String documentNumber,
+        @NotNull BigDecimal interestRate,
         @NotBlank String loanType) {
 }

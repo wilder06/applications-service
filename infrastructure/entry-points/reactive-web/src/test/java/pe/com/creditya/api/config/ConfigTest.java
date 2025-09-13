@@ -43,6 +43,7 @@ Application application=Application.builder()
         .email("emal@gmail.com")
         .amount(BigDecimal.valueOf(1000))
         .documentNumber("48007099")
+        .interestRate(BigDecimal.valueOf(123.54))
         .term(60)
         .idLoanType(1L)
         .build();
@@ -50,6 +51,7 @@ Application application=Application.builder()
 ApplicationResponse applicationResponse =ApplicationResponse.builder()
         .amount(BigDecimal.valueOf(1000))
         .term(60)
+        .interestRate(BigDecimal.valueOf(0.2))
         .build();
 
     @BeforeEach

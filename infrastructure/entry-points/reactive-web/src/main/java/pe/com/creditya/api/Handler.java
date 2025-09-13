@@ -11,6 +11,7 @@ import pe.com.creditya.api.common.config.RequestValidator;
 import pe.com.creditya.api.common.constant.LogConstant;
 import pe.com.creditya.api.dtos.ApplicationRequest;
 import pe.com.creditya.api.mapper.ApplicationMapper;
+import pe.com.creditya.model.loanstatus.LoanStatusEnum;
 import pe.com.creditya.usecase.application.IApplicationUseCase;
 import reactor.core.publisher.Mono;
 
@@ -37,4 +38,18 @@ public class Handler {
                         .bodyValue(savedApplication))
                 .doOnError(ex -> log.error(LogConstant.LOGGER_SAVE_FAILURE, ex.getMessage(), ex));
     }
+
+    public Mono<ServerResponse> listenAllLoanApplicationFindStatusPending(ServerRequest serverRequest) {
+        String status = serverRequest.queryParam("status").map(String::valueOf).orElse(LoanStatusEnum.PENDING.name());
+        int page = serverRequest.queryParam("page").map(Integer::parseInt).orElse(0);
+        int size = serverRequest.queryParam("size").map(Integer::parseInt).orElse(10);
+        return applicationUseCase.getApplicationByStatusPaged(status, page, size)
+                .map(applicationMapper::toDto)
+                .flatMap(res -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(res)
+                );
+    }
+
+
 }

@@ -23,8 +23,10 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 
 @ContextConfiguration(classes = {RouterRest.class, Handler.class, RequestValidator.class, ApplicationMapperImpl.class})
 @EnableConfigurationProperties(ApplicationPath.class)
@@ -70,9 +72,12 @@ class RouterRestTest {
     @Test
     void testListenPOSTUseCase() {
         when(applicationMapper.toApplication(any(ApplicationRequest.class))).thenReturn(application);
-        when(applicationUseCase.saveLoanApplication(any(Application.class))).thenReturn(Mono.just(application));
+        when(applicationUseCase.saveLoanApplication(any(Application.class),any())).thenReturn(Mono.just(application));
         when(applicationMapper.toApplicationResponse(any(Application.class))).thenReturn(applicationResponse);
-        webTestClient.post()
+        webTestClient
+                .mutateWith(mockUser("user").roles("USER"))
+                .mutateWith(csrf())
+                .post()
                 .uri(applicationPath.getApplications())
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(applicationRequest)

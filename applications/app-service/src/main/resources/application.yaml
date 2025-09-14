@@ -28,9 +28,6 @@ cors:
 routes:
   paths:
     applications: "/api/v1/solicitudes"
-jwt:
-  secret: mySuperSecretKeyThatIsAtLeast256BitsLongForHS256Algorithm
-  expiration: 30
 adapters:
   r2dbc:
     host: "localhost"
@@ -45,10 +42,15 @@ adapter:
     url: "http://localhost:8080"
     path-find-user-by-document-number: /api/v1/usuarios/{documentNumber}
     path-find-users-by-emails: /api/v1/usuarios/by-emails
+jwt:
+  keystore-location: /Users/wilderpacpachuaman/Documents/certificados/applications-keystore.jceks
+  keystore-password: changeit
+  key-alias: jwt-signer
+
 resilience4j:
   circuitbreaker:
     instances:
-      testGet:
+      getUsersByEmails:
         registerHealthIndicator: true
         failureRateThreshold: 50
         slowCallRateThreshold: 50
@@ -57,7 +59,7 @@ resilience4j:
         slidingWindowSize: 10
         minimumNumberOfCalls: 10
         waitDurationInOpenState: "10s"
-      testPost:
+      getUserByDocumentNumber:
         registerHealthIndicator: true
         failureRateThreshold: 50
         slowCallRateThreshold: 50

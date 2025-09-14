@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
@@ -39,6 +40,7 @@ public class RouterRest {
                     beanMethod = "listenSaveLoanApplication",
                     operation = @Operation(
                             operationId = "listenSaveLoanApplication",
+                            security = @SecurityRequirement(name = "bearerAuth"),
                             summary = "Registrar nuevo Solicitud",
                             requestBody = @RequestBody(
                                     required = true,
@@ -99,6 +101,7 @@ public class RouterRest {
             operation = @Operation(
                     operationId = "listenAllLoanApplicationFindStatusPending",
                     summary = "Obtener solicitudes por estado con paginación",
+                    security = @SecurityRequirement(name = "bearerAuth"),
                     description = "Retorna todas las solicitudes con el estado especificado en formato paginado.",
                     parameters = {
                             @Parameter(name = "status", description = "Nombre del estado a filtrar", required = true, example = "PENDING"),

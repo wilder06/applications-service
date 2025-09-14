@@ -1,13 +1,15 @@
-/*package pe.com.creditya.security.jwt;
+package pe.com.creditya.security.jwt;
 
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-    @Getter
-    @Component
-    @ConfigurationProperties(prefix = "jwt")
-    public class JwtProperties {
-        private String secret;
-        private long expiration;
-    }*/
+
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "jwt")
+public class JwtProperties {
+    private String keystoreLocation;
+    private String keystorePassword;
+    private String keyAlias;
+}

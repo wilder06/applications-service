@@ -36,8 +36,8 @@ public class ApplicationUseCase implements IApplicationUseCase {
     private final LoanApplicationValidator validator;
 
     @Override
-    public Mono<Application> saveLoanApplication(Application application) {
-        return userRepository.getUserByDocumentNumber(application.getDocumentNumber())
+    public Mono<Application> saveLoanApplication(Application application,String token) {
+        return userRepository.getUserByDocumentNumber(application.getDocumentNumber(),token)
                 .switchIfEmpty(Mono.error(new NotFoundException(LoggerConstants.USER_NOT_FOUND + application.getDocumentNumber())))
                 .flatMap(user -> {
                     application.setEmail(user.getEmail());
@@ -45,21 +45,22 @@ public class ApplicationUseCase implements IApplicationUseCase {
                             .then(findInitialStatus())
                             .flatMap(initialStatus -> {
                                 application.setIdStatus(initialStatus.getId());
-                                validator.validate(application);
+                               validator.validate(application);
                                 return applicationRepository.saveLoanApplication(application);
                             });
-                }).onErrorResume(error -> Mono.error(new TechnicalException(LoggerConstants.LOGGER_ERROR_GENERAL + "{}", error)));
+                })
+                .onErrorResume(error -> Mono.error(new TechnicalException(LoggerConstants.LOGGER_ERROR_GENERAL + "{}", error)));
     }
 
     @Override
-    public Mono<PaginatedApplication<ApplicationReport>> getApplicationByStatusPaged(String status, int page, int size) {
+    public Mono<PaginatedApplication<ApplicationReport>> getApplicationByStatusPaged(String status, int page, int size,String token) {
         long idStatus = LoanStatusEnum.fromName(status);
         int offset = page * size;
 
         Mono<Long> totalApplicationsMono = applicationRepository.countByStatus(idStatus)
                 .onErrorMap(ex -> new TechnicalException("Error obteniendo el total de aplicaciones", ex));
 
-        // Recuperamos una sola vez las aplicaciones
+
         Mono<List<Application>> applicationsMono = applicationRepository.findByStatus(idStatus, offset, size)
                 .collectList().onErrorMap(ex -> new TechnicalException("Error obteniendo la lista de aplicaciones", ex));
 
@@ -70,7 +71,7 @@ public class ApplicationUseCase implements IApplicationUseCase {
                 .map(Application::getEmail)
                 .distinct()
                 .collectList()
-                .flatMapMany(userRepository::getUsersByEmails)
+                .flatMapMany(response->userRepository.getUsersByEmails(response,token))
                 .collectMap(User::getEmail)
                 .onErrorMap(ex -> new CustomClientException("Error obteniendo usuarios desde el servicio externo", ex));
         ;

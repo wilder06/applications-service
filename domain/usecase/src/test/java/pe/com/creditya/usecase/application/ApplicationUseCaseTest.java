@@ -57,18 +57,20 @@ class ApplicationUseCaseTest {
 
         User user = new User();
         user.setEmail("user@test.com");
+        user.setName("demo");
+        user.setBaseSalary(BigDecimal.valueOf(100.2));
 
         LoanStatus loanStatus = new LoanStatus();
         loanStatus.setName(LoanStatusEnum.PENDING.name());
         loanStatus.setId(99L);
         loanStatus.setDescription("Pendiente de revisión");
 
-        when(userRepository.getUserByDocumentNumber("12345678")).thenReturn(Mono.just(user));
+        when(userRepository.getUserByDocumentNumber(any(),any())).thenReturn(Mono.just(user));
         when(loanTypeRepository.findByIdAndAutomaticValidationTrue(1L)).thenReturn(Mono.just(new LoanType()));
         when(loanStatusRepository.findByName(LoanStatusEnum.PENDING.name())).thenReturn(Mono.just(loanStatus));
         when(applicationRepository.saveLoanApplication(any(Application.class))).thenReturn(Mono.just(application));
 
-        Mono<Application> result = useCase.saveLoanApplication(application);
+        Mono<Application> result = useCase.saveLoanApplication(application,"jdfksdlabglkas");
 
         StepVerifier.create(result)
                 .expectNextMatches(app -> app.getEmail().equals("user@test.com"))
@@ -80,9 +82,9 @@ class ApplicationUseCaseTest {
         Application application = new Application();
         application.setDocumentNumber("90876590");
 
-        when(userRepository.getUserByDocumentNumber("90876590")).thenReturn(Mono.empty());
+        when(userRepository.getUserByDocumentNumber(any(),any())).thenReturn(Mono.empty());
 
-        Mono<Application> result = useCase.saveLoanApplication(application);
+        Mono<Application> result = useCase.saveLoanApplication(application,"dgsabvafsb");
 
         StepVerifier.create(result)
                 .expectError(TechnicalException.class)
@@ -108,11 +110,11 @@ class ApplicationUseCaseTest {
                 .thenReturn(Mono.just(1L));
         when(applicationRepository.findByStatus(anyLong(), anyInt(), anyInt()))
                 .thenReturn(Flux.just(application));
-        when(userRepository.getUsersByEmails(any()))
+        when(userRepository.getUsersByEmails(any(),any()))
                 .thenReturn(Flux.just(user));
 
         Mono<PaginatedApplication<ApplicationReport>> result =
-                useCase.getApplicationByStatusPaged(LoanStatusEnum.PENDING.name(), 0, 10);
+                useCase.getApplicationByStatusPaged(LoanStatusEnum.PENDING.name(), 0, 10,any());
 
         StepVerifier.create(result)
                 .assertNext(response -> {
@@ -140,11 +142,11 @@ class ApplicationUseCaseTest {
                 .thenReturn(Mono.just(1L));
         when(applicationRepository.findByStatus(anyLong(), anyInt(), anyInt()))
                 .thenReturn(Flux.just(application));
-        when(userRepository.getUsersByEmails(any()))
+        when(userRepository.getUsersByEmails(any(),any()))
                 .thenReturn(Flux.just(user));
 
         Mono<PaginatedApplication<ApplicationReport>> result =
-                useCase.getApplicationByStatusPaged(LoanStatusEnum.PENDING.name(), 0, 10);
+                useCase.getApplicationByStatusPaged(LoanStatusEnum.PENDING.name(), 0, 10,any());
 
         StepVerifier.create(result)
                 .assertNext(response -> {

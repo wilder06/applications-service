@@ -1,4 +1,4 @@
-/*package pe.com.creditya.security.jwt;
+package pe.com.creditya.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -7,70 +7,57 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import pe.com.creditya.model.user.User;
 import reactor.core.publisher.Mono;
 
-import javax.crypto.SecretKey;
-import java.time.Instant;
-import java.util.Date;
+import java.security.PublicKey;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    private final JwtProperties jwtProperties;
-    private final SecretKey signingKey;
-
-    public String generateToken(UserDetails userDetails, User user) {
-        long expiryMillis = jwtProperties.getExpiration() * 60L * 1000L;
-        Instant now = Instant.now();
-        Instant exp = now.plusMillis(expiryMillis);
-
-        List<String> roles = userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-
-        return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .claim(Constants.PREFIX_ROLES, roles)
-                .claim(Constants.USER_ID, user.getDocumentNumber())
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(exp))
-                .signWith(signingKey)
-                .compact();
-    }
+    private final PublicKey publicKey;
 
     public Claims parseClaims(String token) {
         try {
             return Jwts.parser()
-                    .verifyWith(signingKey)
+                    .verifyWith(publicKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException ex) {
-            log.debug(Constants.LOGGER_EXPIRED_TOKEN, ex);
-            throw ex;
+            log.error("Invalid JWT token", ex);
+            throw new BadCredentialsException("Invalid JWT token", ex);
         }
     }
 
-    public Mono<Claims> validateTokenAndGetClaims(String token) {
-        return Mono.fromCallable(() -> parseClaims(token))
-                .onErrorResume(e -> Mono.error(new BadCredentialsException(Constants.INVALID_JWT_TOKEN, e)));
-    }
+    public Mono<Authentication> getAuthentication(String token) {
+        Claims claims = parseClaims(token);
 
-    @Bean
-    public static SecretKey jwtSigningKey(JwtProperties props) {
-        byte[] keyBytes = Decoders.BASE64.decode(props.getSecret());
-        return Keys.hmacShaKeyFor(keyBytes);
+        String username = claims.getSubject();
+        List<String> roles = claims.get("roles", List.class);
+
+        List<GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        UserDetails userDetails = User.withUsername(username)
+                .authorities(authorities)
+                .password("")
+                .build();
+
+        return Mono.just(new UsernamePasswordAuthenticationToken(userDetails, token, authorities));
     }
 }
-*/
+
 

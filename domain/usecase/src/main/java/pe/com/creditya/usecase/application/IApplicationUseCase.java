@@ -6,7 +6,7 @@ import pe.com.creditya.model.application.PaginatedApplication;
 import reactor.core.publisher.Mono;
 
 public interface IApplicationUseCase {
-    Mono<Application> saveLoanApplication(Application application);
+    Mono<Application> saveLoanApplication(Application application,String token);
 
-    Mono<PaginatedApplication<ApplicationReport>> getApplicationByStatusPaged(String status, int page, int size);
+    Mono<PaginatedApplication<ApplicationReport>> getApplicationByStatusPaged(String status, int page, int size,String token);
 }

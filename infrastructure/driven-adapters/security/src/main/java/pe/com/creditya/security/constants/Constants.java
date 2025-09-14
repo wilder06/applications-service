@@ -1,4 +1,4 @@
-/*package pe.com.creditya.security.constants;
+package pe.com.creditya.security.constants;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,4 +18,3 @@ public class Constants {
     public static final String LOGGER_AUTHENTICATION_FAILED = "Authentication failed: {}";
     public static final String LOGGER_EXPIRED_TOKEN = "Invalid/expired token";
 }
-*/

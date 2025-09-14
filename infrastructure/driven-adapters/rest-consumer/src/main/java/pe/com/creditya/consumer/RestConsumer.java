@@ -40,18 +40,19 @@ public class RestConsumer implements UserRepository {
     private final VariableClient variableClient;
 
     private static final ParameterizedTypeReference<ErrorResponse<ErrorResponseDto>> GENERIC_RESPONSE =
-            new ParameterizedTypeReference<>() {};
+            new ParameterizedTypeReference<>() {
+            };
 
-    @CircuitBreaker(name = "userUsecase", fallbackMethod = "fallbackGetUserByDocument")
+    @CircuitBreaker(name = "getUserByDocumentNumber", fallbackMethod = "fallbackGetUserByDocument")
     @Override
-    public Mono<User> getUserByDocumentNumber(String documentNumber) {
+    public Mono<User> getUserByDocumentNumber(String documentNumber, String token) {
         log.info(LoggerConstants.LOGGER_INIT_CONSUME_CLIENT);
 
         return client.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(variableClient.getPathFindUserByDocumentNumber())
                         .build(documentNumber))
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " +"")
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatus.FORBIDDEN::equals, this::handleForbiddenError)
@@ -65,14 +66,14 @@ public class RestConsumer implements UserRepository {
                         ex -> Mono.error(new ServiceException("User service unavailable: " + ex.getMessage())));
     }
 
-    @CircuitBreaker(name = "userUsecase", fallbackMethod = "fallbackGetUsersByEmails")
+    @CircuitBreaker(name = "getUsersByEmails", fallbackMethod = "fallbackGetUsersByEmails")
     @Override
-    public Flux<User> getUsersByEmails(List<String> emails) {
+    public Flux<User> getUsersByEmails(List<String> emails, String token) {
         log.info(LoggerConstants.LOGGER_INIT_CONSUME_CLIENT);
 
         return client.post()
                 .uri(variableClient.getPathFindUsersByEmails())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3anBoQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9BRFZJU09SIl0sInVzZXJJZCI6IjIzNDU2NzgwIiwiaWF0IjoxNzU3Nzc2OTgyLCJleHAiOjE3NTc5NTY5ODJ9.1Ji6hGF1Dcbflik6v1Us6CeDmjgGe7S5qiy9SepOoL8")
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(emails)
                 .accept(MediaType.APPLICATION_JSON)
@@ -120,9 +121,10 @@ public class RestConsumer implements UserRepository {
     }
 
     private Mono<Throwable> handleForbiddenError(ClientResponse response) {
-        return response.bodyToMono(new ParameterizedTypeReference<ErrorResponse<ErrorResponseDto>>() {})
+        return response.bodyToMono(new ParameterizedTypeReference<ErrorResponse<ErrorResponseDto>>() {
+                })
                 .defaultIfEmpty(new ErrorResponse<>(List.of(
-                        new ErrorResponseDto("Access denied","Forbidden")
+                        new ErrorResponseDto("Access denied", "Forbidden")
                 )))
                 .doOnNext(error -> log.warn("Access denied: {}", error.errorResponseDto()))
                 .flatMap(error -> Mono.error(new AuthorizationException(
@@ -131,12 +133,12 @@ public class RestConsumer implements UserRepository {
     }
 
 
-    private Flux<User> fallbackGetUsersByEmails(List<String> emails, Throwable ex) {
+    private Flux<User> fallbackGetUsersByEmails(List<String> emails, String token, Throwable ex) {
         log.warn("Fallback activated for {} emails. Cause: {}", emails.size(), ex.getMessage());
         return Flux.empty();
     }
 
-    private Mono<User> fallbackGetUserByDocument(String documentNumber, Throwable ex) {
+    private Mono<User> fallbackGetUserByDocument(String documentNumber, String token, Throwable ex) {
         log.warn("Fallback activated for document {}. Cause: {}", documentNumber, ex.getMessage());
         return Mono.empty();
     }

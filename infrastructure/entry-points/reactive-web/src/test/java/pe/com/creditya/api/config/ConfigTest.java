@@ -1,6 +1,7 @@
 package pe.com.creditya.api.config;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import pe.com.creditya.api.Handler;
 import pe.com.creditya.api.RouterRest;
@@ -23,7 +24,10 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 
 @ContextConfiguration(classes = {RouterRest.class, Handler.class,
         ApplicationPath.class,
@@ -57,13 +61,17 @@ ApplicationResponse applicationResponse =ApplicationResponse.builder()
     @BeforeEach
     void setUp() {
         when(applicationMapper.toApplication(any(ApplicationRequest.class))).thenReturn(application);
-        when(applicationUseCase.saveLoanApplication(any(Application.class))).thenReturn(Mono.just(application));
+        when(applicationUseCase.saveLoanApplication(any(Application.class),anyString())).thenReturn(Mono.just(application));
         when(applicationMapper.toApplicationResponse(any(Application.class))).thenReturn(applicationResponse);
 
     }
     @Test
     void corsConfigurationShouldAllowOrigins() {
-        webTestClient.post()
+        webTestClient
+                .mutateWith(mockUser()
+                        .authorities(new SimpleGrantedAuthority("ADMIN")))
+                .mutateWith(csrf())
+                .post()
                 .uri("/api/v1/solicitudes")
                 .exchange()
                 .expectHeader().valueEquals("Content-Security-Policy",

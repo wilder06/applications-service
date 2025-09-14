@@ -66,7 +66,7 @@ class RestConsumerTest {
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody(userResponseJson));
 
-        Mono<User> mono = restConsumer.getUserByDocumentNumber("12345678");
+        Mono<User> mono = restConsumer.getUserByDocumentNumber("12345678","bfksdjbfkdjsbfgkjsdbgkjsdbg");
 
         StepVerifier.create(mono)
                 .expectNextMatches(user -> user.getEmail().equals("demo@gmail.com"))
@@ -83,7 +83,7 @@ class RestConsumerTest {
                 .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .setBody("{\"error\":\"Server error\"}"));
 
-        Mono<User> mono = restConsumer.getUserByDocumentNumber("12345678");
+        Mono<User> mono = restConsumer.getUserByDocumentNumber("12345678","bfksdjbfkdjsbfgkjsdbgkjsdbg");
 
         StepVerifier.create(mono)
                 .expectErrorMatches(throwable ->
@@ -99,7 +99,7 @@ class RestConsumerTest {
                 .setResponseCode(HttpStatus.BAD_REQUEST.value())
                 .setBody("{\"error\":\"Client error\"}"));
 
-        Mono<User> mono = restConsumer.getUserByDocumentNumber("12345678");
+        Mono<User> mono = restConsumer.getUserByDocumentNumber("12345678","bfksdjbfkdjsbfgkjsdbgkjsdbg");
 
         StepVerifier.create(mono)
                 .expectErrorMatches(throwable ->
@@ -122,7 +122,7 @@ class RestConsumerTest {
                 .setResponseCode(HttpStatus.OK.value())
                 .setBody(userResponseJson));
 
-        Flux<User> responseUsers = restConsumer.getUsersByEmails(List.of("demo@gmail.com"));
+        Flux<User> responseUsers = restConsumer.getUsersByEmails(List.of("demo@gmail.com"),"bfksdjbfkdjsbfgkjsdbgkjsdbg");
 
         StepVerifier.create(responseUsers)
                 .expectNextMatches(user -> user.getEmail().equals("demo@gmail.com"))
@@ -136,10 +136,10 @@ class RestConsumerTest {
     void validateTestGetUsersByEmails_AuthenticationError() throws Exception {
         mockBackEnd.enqueue(new MockResponse()
                 .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .setResponseCode(HttpStatus.UNAUTHORIZED.value()) // o HttpStatus.FORBIDDEN si corresponde
+                .setResponseCode(HttpStatus.UNAUTHORIZED.value())
                 .setBody("{\"error\":\"Unauthorized\"}"));
 
-        Flux<User> responseUsers = restConsumer.getUsersByEmails(List.of("demo@gmail.com"));
+        Flux<User> responseUsers = restConsumer.getUsersByEmails(List.of("demo@gmail.com"),"bfksdjbfkdjsbfgkjsdbgkjsdbg");
 
         StepVerifier.create(responseUsers)
                 .expectErrorMatches(throwable ->
@@ -158,7 +158,7 @@ class RestConsumerTest {
                 .setResponseCode(HttpStatus.FORBIDDEN.value())
                 .setBody("{\"error\":\"Forbidden\"}"));
 
-        Flux<User> responseUsers = restConsumer.getUsersByEmails(List.of("demo@gmail.com"));
+        Flux<User> responseUsers = restConsumer.getUsersByEmails(List.of("demo@gmail.com"),"bfksdjbfkdjsbfgkjsdbgkjsdbg");
 
         StepVerifier.create(responseUsers)
                 .expectErrorMatches(throwable ->

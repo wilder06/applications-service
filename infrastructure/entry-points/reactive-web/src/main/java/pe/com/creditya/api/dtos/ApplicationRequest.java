@@ -6,7 +6,7 @@ import lombok.Builder;
 
 import java.math.BigDecimal;
 
-@Builder
+@Builder(toBuilder = true)
 public record ApplicationRequest(
         @NotNull BigDecimal amount,
         @NotNull Integer term,

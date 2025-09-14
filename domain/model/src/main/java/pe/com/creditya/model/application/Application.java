@@ -20,4 +20,5 @@ public class Application {
     private String email;
     private Long idStatus;
     private Long idLoanType;
+    private BigDecimal interestRate;
 }

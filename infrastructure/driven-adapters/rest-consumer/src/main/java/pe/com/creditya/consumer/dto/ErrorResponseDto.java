@@ -1,4 +1,4 @@
-package pe.com.creditya.consumer;
+package pe.com.creditya.consumer.dto;
 
 import lombok.Builder;
 

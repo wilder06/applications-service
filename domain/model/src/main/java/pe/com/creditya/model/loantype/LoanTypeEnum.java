@@ -14,8 +14,8 @@ public enum LoanTypeEnum {
     CAR(3L, "Vehicular"),
     EDUCATIONAL(4L, "Educativo"),
     QUICK_CONSUMPTION(5L, "Consumo Rápido");
-    private Long id;
-    private String description;
+    private final Long id;
+    private final String description;
 
 
     public static Long fromName(String name) {

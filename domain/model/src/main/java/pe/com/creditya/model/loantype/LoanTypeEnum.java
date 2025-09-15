@@ -12,8 +12,7 @@ public enum LoanTypeEnum {
     PERSONAL(1L, "Préstamo Personal"),
     MORTGAGE(2L, "Hipotecario"),
     CAR(3L, "Vehicular"),
-    EDUCATIONAL(4L, "Educativo"),
-    QUICK_CONSUMPTION(5L, "Consumo Rápido");
+    EDUCATION(4L, "Educativo");
     private final Long id;
     private final String description;
 

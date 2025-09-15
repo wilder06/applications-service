@@ -27,25 +27,25 @@ cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 routes:
   paths:
-    applications: "/api/v1/solicitudes"
+    applications: "${RESOURCE_APPLICATION}"
 adapters:
   r2dbc:
-    host: "localhost"
+    host: "${R2DBC_HOST}"
     port: 5432
-    database: "applications_db"
-    schema: "public"
-    username: "postgres"
-    password: "postgres"
+    database: "${R2DBC_DATABASE}"
+    schema: "${R2DBC_SCHEMA}"
+    username: "${R2DBC_USERNAME}"
+    password: "${R2DBC_PASSWORD}"
 adapter:
   restconsumer:
     timeout: 5000
-    url: "http://localhost:8080"
-    path-find-user-by-document-number: /api/v1/usuarios/{documentNumber}
-    path-find-users-by-emails: /api/v1/usuarios/by-emails
+    url: "${CLIENT_USER_HOST}"
+    path-find-user-by-document-number: "${CLIENT_USER_BY_DOCUMENT_NUMBER}"
+    path-find-users-by-emails: "${CLIENT_USERS_BY_EMAILS}"
 jwt:
-  keystore-location: /Users/wilderpacpachuaman/Documents/certificados/applications-keystore.jceks
-  keystore-password: changeit
-  key-alias: jwt-signer
+  keystore-location: "${KEYSTORE_LOCATION}"
+  keystore-password: "${KEYSTORE_PASSWORD}"
+  key-alias: "${KEY_ALIAS}"
 
 resilience4j:
   circuitbreaker:

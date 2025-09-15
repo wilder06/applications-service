@@ -13,8 +13,8 @@ public enum LoanStatusEnum {
     PENDING(1L, "PENDING"),
     APPROVED(2L, "APPROVED"),
     REJECTED(3L, "REJECTED"),
-    CANCELLED(4L, "CANCELLED"),
-    DISBURSED(5L, "DISBURSED");
+    CANCELLED(4L, "UNDER_REVIEW"),
+    DISBURSED(5L, "CANCEL");
     private final Long id;
     private final String description;
     public static LoanStatusEnum fromId(Long id) {

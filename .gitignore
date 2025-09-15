@@ -8,6 +8,7 @@ tmp/
 *.tmp
 *.bak
 *.swp
+*.env
 *~.nib
 local.properties
 .settings/

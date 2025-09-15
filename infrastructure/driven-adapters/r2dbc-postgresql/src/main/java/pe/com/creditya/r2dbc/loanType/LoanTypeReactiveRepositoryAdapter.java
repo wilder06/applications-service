@@ -26,13 +26,14 @@ public class LoanTypeReactiveRepositoryAdapter extends ReactiveAdapterOperations
     }
 
     @Override
-    public Mono<LoanType> findByIdAndAutomaticValidationTrue(Long idLoanType) {
+    public Mono<LoanType> findById(Long idLoanType) {
         log.info(LoggerConstants.LOG_START_VERIFY_EXIST_LOAN_TYPE, idLoanType);
 
-        return repository.findByIdAndAutomaticValidationTrue(idLoanType)
+        return repository.findById(idLoanType)
                 .switchIfEmpty(Mono.error(new NotFoundException(
                         LoggerConstants.LOG_NOT_FOUND_LOAN_TYPE + idLoanType
                 )))
+                .map(this::toEntity)
                 .onErrorMap(ex -> new LoanTypePersistenceException(
                         LoggerConstants.LOG_VERIFY_EXIST_LOAN_TYPE,
                         ex

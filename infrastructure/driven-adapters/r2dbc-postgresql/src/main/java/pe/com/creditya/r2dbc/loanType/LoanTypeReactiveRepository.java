@@ -8,5 +8,4 @@ import reactor.core.publisher.Mono;
 
 // TODO: This file is just an example, you should delete or modify it
 public interface LoanTypeReactiveRepository extends ReactiveCrudRepository<LoanTypeEntity, Long>, ReactiveQueryByExampleExecutor<LoanTypeEntity> {
-    Mono<LoanType> findByIdAndAutomaticValidationTrue(Long id);
 }

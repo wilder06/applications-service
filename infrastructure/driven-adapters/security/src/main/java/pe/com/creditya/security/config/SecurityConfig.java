@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 ApiPaths.SWAGGER_UI_ALL,
                                 ApiPaths.WEBJARS_ALL,
                                 ApiPaths.SWAGGER_RESOURCES_ALL).permitAll()
+                        .pathMatchers(ApiPaths.HEALTH_CHECK).permitAll()
                         .pathMatchers(HttpMethod.POST,APPLICATIONS_PATH).authenticated()
                         .pathMatchers(HttpMethod.GET,APPLICATIONS_PATH).authenticated()
                         .anyExchange().authenticated()

@@ -120,7 +120,7 @@ public class ApplicationUseCase implements IApplicationUseCase {
 
 
     private Mono<Void> validLoanType(Long localTypeId) {
-        return loanTypeRepository.findByIdAndAutomaticValidationTrue(localTypeId)
+        return loanTypeRepository.findById(localTypeId)
                 .switchIfEmpty(Mono.error(new NotFoundException(LoggerConstants.LOGGER_TYPE_LOAN_ERROR)))
                 .then(Mono.empty());
     }

@@ -20,6 +20,7 @@ public class ApplicationEntity {
     private BigDecimal amount;
     private Integer term;
     private String email;
+    private BigDecimal interestRate;
     private Long idStatus;
     private Long idLoanType;
 }

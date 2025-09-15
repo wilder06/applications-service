@@ -10,4 +10,6 @@ public class ApiPaths {
     public static final String API_DOCS_ALL = "/v3/api-docs/**";
     public static final String WEBJARS_ALL = "/webjars/**";
     public static final String SWAGGER_RESOURCES_ALL = "/swagger-resources/**";
+    public static final String HEALTH_CHECK = "/actuator/**";
+
 }

@@ -4,5 +4,5 @@ import pe.com.creditya.model.loantype.LoanType;
 import reactor.core.publisher.Mono;
 
 public interface LoanTypeRepository {
-    Mono<LoanType> findByIdAndAutomaticValidationTrue(Long id);
+    Mono<LoanType> findById(Long id);
 }

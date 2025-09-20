@@ -9,4 +9,7 @@ public class LogConstant {
    public static final String LOGGER_RESOURCE_NOT_FOUND="El recurso solicitado no existe: ";
    public static final String LOGGER_VALIDATE_FAILURE="Error en la validacion del request: {} | Violations: {}";
    public static final String LOGGER_VALIDATE_SUCCESS="Validacion exitoso del request: {}";
+    public static final String PARAM_LOAN_STATUS= "status";
+    public static final String PARAM_PAGE = "page";
+    public static final String PARAM_SIZE = "size";
 }

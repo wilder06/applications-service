@@ -4,17 +4,14 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class Constants {
-    public static final String TOKEN_ATTRIBUTE = "token";
-    public static final String PREFIX_TOKEN = "ROLE_";
-    public static final String ROLE_NOT_FOUND = "Role not found";
-    public static final String INVALID_CREDENTIALS = "Invalid credentials";
-    public static final String ROLE_USER = "ROLE_USER";
-    public static final String INVALID_JWT_TOKEN = "Invalid JWT token";
-    public static final String NOT_SENDED_TOKEN = "Token no proporcionado";
-    public static final String MESSAGE_NOT_SUPPORTED = "Save not supported";
-    public static final String PREFIX_BEARER = "Bearer ";
-    public static final String PREFIX_ROLES = "roles";
-    public static final String USER_ID = "userId";
-    public static final String LOGGER_AUTHENTICATION_FAILED = "Authentication failed: {}";
-    public static final String LOGGER_EXPIRED_TOKEN = "Invalid/expired token";
+    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String JCEKS_PREFIX = "JCEKS";
+    public static final String ROLE_USER = "USER";
+    public static final String ROLE_ADVISOR = "ADVISOR";
+    public static final String CLAIMS_NAME = "roles";
+    public static final String LOG_PARSE_ERROR = "Error al parsear el token JWT";
+    public static final String LOG_INVALID_TOKEN = "Token inválido o expirado: {}";
+    public static final String LOG_MISSING_AUTH_HEADER = "No se encontró cabecera Authorization válida";
+    public static final String LOG_MISSING_JWT_AUTHENTICATION= "Error inesperado al autenticar token JWT";
+    public static final String LOG_MISSING_FAILED_PUBLIC_KEY= "Failed to load public key from keystore";
 }

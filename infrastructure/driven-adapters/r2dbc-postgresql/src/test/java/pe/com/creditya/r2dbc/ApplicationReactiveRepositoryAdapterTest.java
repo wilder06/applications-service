@@ -39,7 +39,7 @@ class ApplicationReactiveRepositoryAdapterTest {
     @Test
     void mustSaveLoanApplication() {
         Application application = new Application(1, BigDecimal.valueOf(12.1), 12, "12345678", "LoanTest@gmail.com", 1L, 1L, new BigDecimal("12.0"));
-        ApplicationEntity entity = new ApplicationEntity(1, BigDecimal.valueOf(12.1), 12, "LoanTest@gmail.com", 1L, 1L);
+        ApplicationEntity entity = new ApplicationEntity(1, BigDecimal.valueOf(12.1), 12, "LoanTest@gmail.com", BigDecimal.valueOf(12.1),1L, 1L);
         when(transactionalOperator.transactional(any(Mono.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(mapper.map(application, ApplicationEntity.class)).thenReturn(entity);
@@ -66,8 +66,8 @@ class ApplicationReactiveRepositoryAdapterTest {
     void findByStatus_returnsApplications() {
 
         // given
-        ApplicationEntity entity1 = new ApplicationEntity(1, BigDecimal.valueOf(12.1), 12, "LoanTest@gmail.com", 1L, 1L);
-        ApplicationEntity entity2 = new ApplicationEntity(2, BigDecimal.valueOf(12.1), 12, "LoanTest@gmail.com", 1L, 1L);
+        ApplicationEntity entity1 = new ApplicationEntity(1, BigDecimal.valueOf(12.1), 12, "LoanTest@gmail.com",BigDecimal.valueOf(12.1) ,1L, 1L);
+        ApplicationEntity entity2 = new ApplicationEntity(2, BigDecimal.valueOf(12.1), 12, "LoanTest@gmail.com",BigDecimal.valueOf(12.1), 1L, 1L);
 
         Application mappedApp1 = new Application(1, BigDecimal.valueOf(12.1), 12, "12345678", "LoanTest@gmail.com", 1L, 1L, new BigDecimal("12.0"));
         Application mappedApp2 = new Application(2, BigDecimal.valueOf(12.1), 12, "12345678", "LoanTest@gmail.com", 1L, 1L, new BigDecimal("12.0"));

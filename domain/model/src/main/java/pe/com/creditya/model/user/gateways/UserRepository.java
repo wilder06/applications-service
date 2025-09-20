@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface UserRepository {
-    Mono<User> getUserByDocumentNumber(String documentNumber,String token);
-    Flux<User> getUsersByEmails(List<String> emails,String token);
+    Mono<User> getUserByDocumentNumber(String documentNumber);
+    Flux<User> getUsersByEmails(List<String> emails);
 
 }

@@ -66,7 +66,7 @@ class ApplicationUseCaseTest {
         loanStatus.setDescription("Pendiente de revisión");
 
         when(userRepository.getUserByDocumentNumber(any(),any())).thenReturn(Mono.just(user));
-        when(loanTypeRepository.findByIdAndAutomaticValidationTrue(1L)).thenReturn(Mono.just(new LoanType()));
+        when(loanTypeRepository.findById(1L)).thenReturn(Mono.just(new LoanType()));
         when(loanStatusRepository.findByName(LoanStatusEnum.PENDING.name())).thenReturn(Mono.just(loanStatus));
         when(applicationRepository.saveLoanApplication(any(Application.class))).thenReturn(Mono.just(application));
 

@@ -37,7 +37,7 @@ public class ApplicationUseCase implements IApplicationUseCase {
 
     @Override
     public Mono<Application> saveLoanApplication(Application application,String token) {
-        return userRepository.getUserByDocumentNumber(application.getDocumentNumber(),token)
+        return userRepository.getUserByDocumentNumber(application.getDocumentNumber())
                 .switchIfEmpty(Mono.error(new NotFoundException(LoggerConstants.USER_NOT_FOUND + application.getDocumentNumber())))
                 .flatMap(user -> {
                     application.setEmail(user.getEmail());
@@ -58,30 +58,24 @@ public class ApplicationUseCase implements IApplicationUseCase {
         int offset = page * size;
 
         Mono<Long> totalApplicationsMono = applicationRepository.countByStatus(idStatus)
-                .onErrorMap(ex -> new TechnicalException("Error obteniendo el total de aplicaciones", ex));
-
+                .onErrorMap(ex -> new TechnicalException(LoggerConstants.ERROR_TOTAL_APPLICATIONS, ex));
 
         Mono<List<Application>> applicationsMono = applicationRepository.findByStatus(idStatus, offset, size)
-                .collectList().onErrorMap(ex -> new TechnicalException("Error obteniendo la lista de aplicaciones", ex));
+                .collectList()
+                .onErrorMap(ex -> new TechnicalException(LoggerConstants.ERROR_LIST_APPLICATIONS, ex));
 
-
-        // Obtenemos usuarios a partir de los correos de las aplicaciones
         Mono<Map<String, User>> usersByEmailMono = applicationsMono
                 .flatMapMany(Flux::fromIterable)
                 .map(Application::getEmail)
                 .distinct()
                 .collectList()
-                .flatMapMany(response->userRepository.getUsersByEmails(response,token))
+                .flatMapMany(userRepository::getUsersByEmails)
                 .collectMap(User::getEmail)
-                .onErrorMap(ex -> new CustomClientException("Error obteniendo usuarios desde el servicio externo", ex));
-        ;
-        //sirve para combinar varios Mono en uno solo, y esperar a que todos terminen para producir un único resultado (una tupla)
-        //totalApplicationsMono → devuelve el total de aplicaciones (un Long).
-        //applicationsMono → devuelve la lista de aplicaciones (List<Application>).
-        //usersByEmailMono → devuelve un mapa de usuarios (Map<String, User>).
+                .onErrorMap(ex -> new CustomClientException(LoggerConstants.ERROR_USERS_EXTERNAL_SERVICE, ex));
+
         return Mono.zip(totalApplicationsMono, applicationsMono, usersByEmailMono)
                 .map(tuple -> buildPaginatedResponse(tuple.getT1(), tuple.getT2(), tuple.getT3(), page, size))
-                .onErrorResume(ex -> Mono.error(new ApplicationException("No se pudo procesar la solicitud", ex)));
+                .onErrorResume(ex -> Mono.error(new ApplicationException(LoggerConstants.ERROR_PROCESSING_REQUEST, ex)));
     }
 
     private PaginatedApplication<ApplicationReport> buildPaginatedResponse(
